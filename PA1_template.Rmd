@@ -21,8 +21,10 @@ actData["meanSteps_allDays"] = tapply(actData$steps, actData$interval, mean, na.
 ## What is mean total number of steps taken per day?
 ```{r Make a histogram of the total number of steps taken each day, echo = TRUE, message = FALSE, warning = FALSE}
 library(ggplot2)
+#png("./figure/histogram1.png")
 ggplot(data = actData, aes(x = steps))+
         geom_histogram()
+#dev.off()
 ```
 
 ```{r calculate and report the mean and median total number of steps taken per day, echo = TRUE}
@@ -34,9 +36,11 @@ print(c(paste("mean total number of steps:", meanTotalStep), paste("median total
 
 ## What is the average daily activity pattern?
 ```{r make a time series plot of the 5-minute interval and the average number of steps taken averaged across all days, echo = TRUE}
+#png("./figure/time_series1.png")
 ggplot(data = actData, aes(x = interval, y = meanSteps_allDays))+
         geom_line()+
         labs(y = "average steps across all days")
+#dev.off()
 ```
 
 ```{r which 5-minute interval(on average across all the days)contains the maximum number of steps, echo = TRUE}
@@ -54,12 +58,17 @@ print(paste("total number of missing values:", totalMiss))
 fillData <- actData
 missIn <- which(is.na(actData$steps))
 fillData$steps[missIn] <- fillData$meanSteps_allDays[missIn]
+str(fillData)
 ```
 
-```{r make a histogram of the total number of steps taken each day and calculate the mean and median total number of steps, echo = TRUE, message = FALSE}
+```{r make a histogram of the total number of steps taken each day, echo = TRUE, message = FALSE}
+#png("./figure/histogram2.png")
 ggplot(data = fillData, aes(x = steps))+
         geom_histogram()
+#dev.off()
+```
 
+```{r calculate the mean and median total number of steps, echo = TRUE}
 meanFillTotalStep <- with(fillData, mean(steps, na.rm = TRUE))
 medianFillTotalStep <- with(fillData, median(steps, na.rm = TRUE))
 print(c(paste("mean total number of steps after filling in missing values:", meanFillTotalStep), paste("median total number of steps after filling in missing values:", medianFillTotalStep)))
@@ -76,8 +85,10 @@ fillData$week <- as.factor(fillData$week)
 str(fillData$week)
 ```
 ```{r make a time series plot of the the average number of steps averaged across all weekday days or weekend days, echo = TRUE}
+#png("./figure/time_series2.png")
 ggplot(data = subset(fillData), aes(x = interval, y = meanSteps_allDays))+
   geom_line()+
   facet_grid(.~week)+
   labs(y = "average steps across all weekdays or weekends")
+#dev.off()
 ```

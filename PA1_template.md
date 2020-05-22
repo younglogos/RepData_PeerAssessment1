@@ -31,11 +31,16 @@ actData["meanSteps_allDays"] = tapply(actData$steps, actData$interval, mean, na.
 
 ```r
 library(ggplot2)
+#png("./figure/histogram1.png")
 ggplot(data = actData, aes(x = steps))+
         geom_histogram()
 ```
 
 ![](PA1_template_files/figure-html/Make a histogram of the total number of steps taken each day-1.png)<!-- -->
+
+```r
+#dev.off()
+```
 
 
 ```r
@@ -53,12 +58,17 @@ print(c(paste("mean total number of steps:", meanTotalStep), paste("median total
 ## What is the average daily activity pattern?
 
 ```r
+#png("./figure/time_series1.png")
 ggplot(data = actData, aes(x = interval, y = meanSteps_allDays))+
         geom_line()+
         labs(y = "average steps across all days")
 ```
 
 ![](PA1_template_files/figure-html/make a time series plot of the 5-minute interval and the average number of steps taken averaged across all days-1.png)<!-- -->
+
+```r
+#dev.off()
+```
 
 
 ```r
@@ -86,15 +96,30 @@ print(paste("total number of missing values:", totalMiss))
 fillData <- actData
 missIn <- which(is.na(actData$steps))
 fillData$steps[missIn] <- fillData$meanSteps_allDays[missIn]
+str(fillData)
+```
+
+```
+## 'data.frame':	17568 obs. of  4 variables:
+##  $ steps            : num  1.717 0.3396 0.1321 0.1509 0.0755 ...
+##  $ date             : Factor w/ 61 levels "2012-10-01","2012-10-02",..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ interval         : int  0 5 10 15 20 25 30 35 40 45 ...
+##  $ meanSteps_allDays: num  1.717 0.3396 0.1321 0.1509 0.0755 ...
 ```
 
 
 ```r
+#png("./figure/histogram2.png")
 ggplot(data = fillData, aes(x = steps))+
         geom_histogram()
 ```
 
-![](PA1_template_files/figure-html/make a histogram of the total number of steps taken each day and calculate the mean and median total number of steps-1.png)<!-- -->
+![](PA1_template_files/figure-html/make a histogram of the total number of steps taken each day-1.png)<!-- -->
+
+```r
+#dev.off()
+```
+
 
 ```r
 meanFillTotalStep <- with(fillData, mean(steps, na.rm = TRUE))
@@ -124,6 +149,7 @@ str(fillData$week)
 ```
 
 ```r
+#png("./figure/time_series2.png")
 ggplot(data = subset(fillData), aes(x = interval, y = meanSteps_allDays))+
   geom_line()+
   facet_grid(.~week)+
@@ -131,3 +157,7 @@ ggplot(data = subset(fillData), aes(x = interval, y = meanSteps_allDays))+
 ```
 
 ![](PA1_template_files/figure-html/make a time series plot of the the average number of steps averaged across all weekday days or weekend days-1.png)<!-- -->
+
+```r
+#dev.off()
+```
