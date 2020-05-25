@@ -30,8 +30,6 @@ library(ggplot2)
 ggplot(data = actData, aes(x = steps))+
         geom_histogram()
 ```
-
-![](PA1_template_files/figure-html/Make a histogram of the total number of steps taken each day-1.png)<!-- -->
 ![](https://github.com/younglogos/RepData_PeerAssessment1/blob/master/figure/histogram1.png)
 
 
@@ -54,8 +52,6 @@ ggplot(data = actData, aes(x = interval, y = meanSteps_allDays))+
         geom_line()+
         labs(y = "average steps across all days")
 ```
-
-![](PA1_template_files/figure-html/make a time series plot of the 5-minute interval and the average number of steps taken averaged across all days-1.png)<!-- -->
 ![ ](https://github.com/younglogos/RepData_PeerAssessment1/blob/master/figure/time_series1.png)
 
 
@@ -100,8 +96,6 @@ str(fillData)
 ggplot(data = fillData, aes(x = steps))+
         geom_histogram()
 ```
-
-![](PA1_template_files/figure-html/make a histogram of the total number of steps taken each day-1.png)<!-- -->
 ![](https://github.com/younglogos/RepData_PeerAssessment1/blob/master/figure/histogram2.png)
 
 
@@ -139,11 +133,5 @@ ggplot(data = subset(fillData), aes(x = interval, y = meanSteps_allDays))+
   geom_line()+
   facet_grid(.~week)+
   labs(y = "average steps across all weekdays or weekends")
-```
-
-![](PA1_template_files/figure-html/make a time series plot of the the average number of steps averaged across all weekday days or weekend days-1.png)<!-- -->
-
-```r
-#dev.off()
 ```
 ![](https://github.com/younglogos/RepData_PeerAssessment1/blob/master/figure/time_series2.png)
