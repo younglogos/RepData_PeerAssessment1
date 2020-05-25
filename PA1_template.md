@@ -1,9 +1,5 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+Reproducible Research: Peer Assessment 1
+========================================
 
 
 ## Loading and preprocessing the data
@@ -31,16 +27,12 @@ actData["meanSteps_allDays"] = tapply(actData$steps, actData$interval, mean, na.
 
 ```r
 library(ggplot2)
-#png("./figure/histogram1.png")
 ggplot(data = actData, aes(x = steps))+
         geom_histogram()
 ```
 
 ![](PA1_template_files/figure-html/Make a histogram of the total number of steps taken each day-1.png)<!-- -->
-
-```r
-#dev.off()
-```
+![](https://github.com/younglogos/RepData_PeerAssessment1/blob/master/figure/histogram1.png)
 
 
 ```r
@@ -58,17 +50,13 @@ print(c(paste("mean total number of steps:", meanTotalStep), paste("median total
 ## What is the average daily activity pattern?
 
 ```r
-#png("./figure/time_series1.png")
 ggplot(data = actData, aes(x = interval, y = meanSteps_allDays))+
         geom_line()+
         labs(y = "average steps across all days")
 ```
 
 ![](PA1_template_files/figure-html/make a time series plot of the 5-minute interval and the average number of steps taken averaged across all days-1.png)<!-- -->
-
-```r
-#dev.off()
-```
+![ ](https://github.com/younglogos/RepData_PeerAssessment1/blob/master/figure/time_series1.png)
 
 
 ```r
@@ -109,16 +97,12 @@ str(fillData)
 
 
 ```r
-#png("./figure/histogram2.png")
 ggplot(data = fillData, aes(x = steps))+
         geom_histogram()
 ```
 
 ![](PA1_template_files/figure-html/make a histogram of the total number of steps taken each day-1.png)<!-- -->
-
-```r
-#dev.off()
-```
+![](https://github.com/younglogos/RepData_PeerAssessment1/blob/master/figure/histogram2.png)
 
 
 ```r
@@ -131,6 +115,7 @@ print(c(paste("mean total number of steps after filling in missing values:", mea
 ## [1] "mean total number of steps after filling in missing values: 37.3825995807128"
 ## [2] "median total number of steps after filling in missing values: 0"
 ```
+
 There is no significant difference on mean and median compared with first part of assignment. It indicated that there was little impact of imputing missing data.
 
 
@@ -161,3 +146,4 @@ ggplot(data = subset(fillData), aes(x = interval, y = meanSteps_allDays))+
 ```r
 #dev.off()
 ```
+![](https://github.com/younglogos/RepData_PeerAssessment1/blob/master/figure/time_series2.png)
