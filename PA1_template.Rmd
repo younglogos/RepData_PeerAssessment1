@@ -1,8 +1,9 @@
 ---
-title: "Reproducible Research: Peer Assessment 1"
-output: 
+title: 'Reproducible Research: Peer Assessment 1'
+output:
   html_document:
-    keep_md: true
+    keep_md: yes
+  pdf_document: default
 ---
 
 
@@ -14,35 +15,38 @@ str(actData)
 ```
 
 ```{r Process/transform the data into a format suitable for analysis}
-actData["meanSteps_allDays"] = tapply(actData$steps, actData$interval, mean, na.rm = TRUE)
+meanSteps_allDays <- tapply(actData$steps, actData$interval, mean, na.rm = TRUE)
+stepsInterval <- data.frame(interval = as.numeric(as.character(names(meanSteps_allDays))), steps = as.vector(meanSteps_allDays))
+totalStepsPerD1 <- tapply(actData$steps, actData$date, sum)
+stepsPerday1 <- data.frame(date = names(totalStepsPerD1), steps = as.vector(totalStepsPerD1))
 ```
 
 
 ## What is mean total number of steps taken per day?
 ```{r Make a histogram of the total number of steps taken each day, echo = TRUE, message = FALSE, warning = FALSE}
 library(ggplot2)
-ggplot(data = actData, aes(x = steps))+
+ggplot(data = stepsPerday1, aes(x = steps))+
         geom_histogram()
 ```
 ![](https://github.com/younglogos/RepData_PeerAssessment1/blob/master/figure/histogram1.png)
 
 ```{r calculate and report the mean and median total number of steps taken per day, echo = TRUE}
-meanTotalStep <- with(actData, mean(steps, na.rm = TRUE))
-medianTotalStep <- with(actData, median(steps, na.rm = TRUE))
+meanTotalStep <- with(stepsPerday1, mean(steps, na.rm = TRUE))
+medianTotalStep <- with(stepsPerday1, median(steps, na.rm = TRUE))
 print(c(paste("mean total number of steps:", meanTotalStep), paste("median total number of steps:", medianTotalStep)))
 ```
 
 
 ## What is the average daily activity pattern?
 ```{r make a time series plot of the 5-minute interval and the average number of steps taken averaged across all days, echo = TRUE}
-ggplot(data = actData, aes(x = interval, y = meanSteps_allDays))+
+ggplot(data = stepsInterval, aes(x = interval, y = steps))+
         geom_line()+
         labs(y = "average steps across all days")
 ```
-![ ](https://github.com/younglogos/RepData_PeerAssessment1/blob/master/figure/time_series1.png)
+![](https://github.com/younglogos/RepData_PeerAssessment1/blob/master/figure/time_series1.png)
 
 ```{r which 5-minute interval(on average across all the days)contains the maximum number of steps, echo = TRUE}
-interval_maxSteps <- unique(actData$interval[which(actData$meanSteps_allDays == max(actData$meanSteps_allDays))])
+interval_maxSteps <- stepsInterval$interval[which(stepsInterval$steps == max(stepsInterval$steps))]
 print(paste("interval with the max steps averaged across all days:",interval_maxSteps))
 ```
 
@@ -54,20 +58,23 @@ print(paste("total number of missing values:", totalMiss))
 
 ```{r devise a strategy for filling in all of the missing values in the dataset and create a new dataset that is equal to the original dataset but with the missing data filled in, echo = TRUE}
 fillData <- actData
-missIn <- which(is.na(actData$steps))
-fillData$steps[missIn] <- fillData$meanSteps_allDays[missIn]
+missInd <- which(is.na(actData$steps))
+IndInertval <- actData$interval[missInd]
+fillData$steps[missInd] <- stepsInterval$steps[which(stepsInterval$interval == IndInertval)]
+totalStepsPerD2 <- tapply(fillData$steps, fillData$date, sum)
+stepsPerday2 <- data.frame(date = names(totalStepsPerD2), steps = as.vector(totalStepsPerD2))
 str(fillData)
 ```
 
 ```{r make a histogram of the total number of steps taken each day, echo = TRUE, message = FALSE}
-ggplot(data = fillData, aes(x = steps))+
+ggplot(data = stepsPerday2, aes(x = steps))+
         geom_histogram()
 ```
 ![](https://github.com/younglogos/RepData_PeerAssessment1/blob/master/figure/histogram2.png)
 
 ```{r calculate the mean and median total number of steps, echo = TRUE}
-meanFillTotalStep <- with(fillData, mean(steps, na.rm = TRUE))
-medianFillTotalStep <- with(fillData, median(steps, na.rm = TRUE))
+meanFillTotalStep <- with(stepsPerday2, mean(steps, na.rm = TRUE))
+medianFillTotalStep <- with(stepsPerday2, median(steps, na.rm = TRUE))
 print(c(paste("mean total number of steps after filling in missing values:", meanFillTotalStep), paste("median total number of steps after filling in missing values:", medianFillTotalStep)))
 ```
 
@@ -76,14 +83,22 @@ There is no significant difference on mean and median compared with first part o
 
 ## Are there differences in activity patterns between weekdays and weekends?
 ```{r Create a new factor variable in the dataset with two levels "weekday" and "weekend", echo = TRUE}
+library(dplyr)
 fillData["week"] <- weekdays(as.Date(fillData$date))
 fillData$week[fillData$week != "星期六" & fillData$week != "星期日"] <- "weekday"
 fillData$week[fillData$week == "星期六" | fillData$week == "星期日"] <- "weekend"
 fillData$week <- as.factor(fillData$week)
+weekdaySteps <- with(subset(fillData, week == "weekday"), tapply(steps,interval, mean, na.rm = TRUE))
+weekendSteps <- with(subset(fillData, week == "weekend"), tapply(steps,interval, mean, na.rm = TRUE))
+weekdayMeanSteps <- data.frame(interval = as.numeric(as.character(names(weekdaySteps))), steps = as.vector(weekdaySteps), week = rep("weekday", dim(weekdaySteps)[1]))
+weekendMeanSteps <- data.frame(interval = as.numeric(as.character(names(weekendSteps))), steps = as.vector(weekendSteps), week = rep("weekend", dim(weekendSteps)[1]))
+weekMeanSteps <- rbind(weekdayMeanSteps, weekendMeanSteps)
 str(fillData$week)
 ```
+
+
 ```{r make a time series plot of the the average number of steps averaged across all weekday days or weekend days, echo = TRUE}
-ggplot(data = subset(fillData), aes(x = interval, y = meanSteps_allDays))+
+ggplot(data = weekMeanSteps, aes(x = interval, y = steps))+
   geom_line()+
   facet_grid(.~week)+
   labs(y = "average steps across all weekdays or weekends")
