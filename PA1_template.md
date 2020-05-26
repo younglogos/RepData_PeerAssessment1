@@ -171,7 +171,7 @@ str(fillData$week)
 ```r
 ggplot(data = weekMeanSteps, aes(x = interval, y = steps))+
   geom_line()+
-  facet_grid(.~week)+
-  labs(y = "average steps across all weekdays or weekends")
+  facet_grid(week~.)+
+  labs(y = "average steps")
 ```
 ![](https://github.com/younglogos/RepData_PeerAssessment1/blob/master/figure/time_series2.png)
